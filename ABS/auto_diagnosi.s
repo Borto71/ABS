@@ -31,7 +31,7 @@ anomaly_msg .asciz "Anomalia rilevata, ||ABS NON IN FUNZIONE||ARRESTARE IL VEICO
 
 .global_start
 
-_start
+_start:
 
 BL init_sensor // salto all'etichetta che inizializza i sensori
 
@@ -74,24 +74,32 @@ positive_diff:
     ADD R0, R0, R1, LSL #2 // calcolo l'indirizzo per l'offset in memoria per accedere ai sensori di una ruota specifica
     BL print_string // ora stampo il numero della ruota
 
-    no_error:
-        BL LR // ritorno al chiemante, tramite il registro LR
+no_error:
+    BL LR // ritorno al chiemante, tramite il registro LR
 
-    print_string:
+print_string:
     // stampo la stringa puntata da R0
-        MOV R1, R0 // salvo l'indirizzo della stringa in R1
+    MOV R1, R0 // salvo l'indirizzo della stringa in R1
 
-    print_loop:
-        LDRB R2, [R1], #1 // leggo di un byte e avanzo 
-        CMP R2, #0 // controllo se il terminatore non è nullo 
-        BEQ print_done // se è nullo ho finito e quindi salto a print_done
-        
+ print_loop:
+    LDRB R2, [R1], #1 // leggo di un byte e avanzo 
+    R2, #0 // controllo se il terminatore non è nullo 
+    BEQ print_done // se è nullo ho finito e quindi salto a print_done
+    MOV R7, #4  // chiamata a sistema della write 
+    MOV R0, #1 // file descriptor di stdout
+    MOV R2, #1 //lunghezza di un byte 
+    SVC #0 // chiamata a sistema (supervisor call)
+    B print_loop // continua il loop 
+
+print_done:
+
+
 
 
 
 
 init_sensor:
-        MOV R0, #0                         // simulo la velocità iniziale per i sensori
+    MOV R0, #0                         // simulo la velocità iniziale per i sensori
     STR R0, [speed_wheel_1]
     STR R0, [speed_wheel_2]
     STR R0, [speed_wheel_3]
