@@ -70,6 +70,23 @@ positive_diff:
     // segnalo ERRORE NEI SENSORI
     LDR R0, =error_message // carico sul registro R0 il messaggio di errore
     BL print_string // stampo il messaggio di errore
+    LDR R0, =wheel_labels // carico l'indirizzo delle ruota
+    ADD R0, R0, R1, LSL #2 // calcolo l'indirizzo per l'offset in memoria per accedere ai sensori di una ruota specifica
+    BL print_string // ora stampo il numero della ruota
+
+    no_error:
+        BL LR // ritorno al chiemante, tramite il registro LR
+
+    print_string:
+    // stampo la stringa puntata da R0
+        MOV R1, R0 // salvo l'indirizzo della stringa in R1
+
+    print_loop:
+        LDRB R2, [R1], #1 // leggo di un byte e avanzo 
+        CMP R2, #0 // controllo se il terminatore non è nullo 
+        BEQ print_done // se è nullo ho finito e quindi salto a print_done
+        
+
 
 
 
