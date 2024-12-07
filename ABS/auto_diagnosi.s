@@ -92,14 +92,10 @@ print_string:
     B print_loop // continua il loop 
 
 print_done:
+    BX LR // ritorno al chiamante 
 
-
-
-
-
-
-init_sensor:
-    MOV R0, #0                         // simulo la velocità iniziale per i sensori
+init_sensor: // etichetta che inizializza i sensori
+    MOV R0, #0 // simulo una velocità per i sensori
     STR R0, [speed_wheel_1]
     STR R0, [speed_wheel_2]
     STR R0, [speed_wheel_3]
@@ -107,7 +103,6 @@ init_sensor:
     STR R0, [global_speed]
     BX LR 
 
-    
-
-read_speed_sensor:
-    BL read_speed_main // salto all'etichetta dove leggo il valore dal sensore principale
+end_program: // fine del programma 
+    MOV R7, #1 // syscall per exit
+    SVC #0
