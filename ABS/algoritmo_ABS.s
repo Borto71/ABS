@@ -47,6 +47,7 @@ abs_loop:
     CMP R4, #5 // controllo se è maggiore o minore di 5
     BLE abs_loop // se <= 5 rimani in ascolto (non attivare ABS)
     
+    
 
 
 
