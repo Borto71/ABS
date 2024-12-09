@@ -27,6 +27,7 @@ anomaly_msg .asciz "Anomalia rilevata, ||ABS NON IN FUNZIONE||ARRESTARE IL VEICO
     speed_wheel_4: .space 4
     global_speed: .space 4 // riservo 4 byte alla velocità globale 
 
+
 .section .text 
 
 .global_start
@@ -35,22 +36,37 @@ _start:
 
 BL init_sensor // salto all'etichetta che inizializza i sensori
 
-// ORA STO FACENDO LA DIAGNOSI PER SINGOLA RUOTA 
+main_loop: 
+    LDR R0, engine_status // vado a caricare l'indirizzo di engine status 
+    LDR R1, [R0] // ora carico il valore in R1
+    CMP R1, #0 // controllo se è 0
+    BEQ end_program // se è 0 salto a end_program
+    
+    // effettu la diagnosi per ogni ruota
 
-//RUOTA 1 
-    LDR R0, =speed_wheel_1 // carico l'indirizzo del sensore della ruota 1
-    BL check_wheel // controllo ruota 1
-//RUOTA 2
-    LDR R0, =speed_wheel_2 // carico l'indirizzo del sensore della ruota 2
-    BL check_wheel // controllo ruota 1
-//RUOTA 3
-    LDR R0, =speed_wheel_3 // carico l'indirizzo del sensore della ruota 3
-    BL check_wheel // controllo ruota 1
-//RUOTA 4
-    LDR R0, =speed_wheel_4 // carico l'indirizzo del sensore della ruota 4
-    BL check_wheel // controllo ruota 1
+    BL diagnose_wheels 
 
-    BL end_program // salto alla fine del programma 
+    B main_loop // rimango nel main loop
+
+diagnose_wheels: 
+//DIAGNOSI PER RUOTA 1  
+    LDR R0, =speed_wheel_1
+    MOV R1, #0
+    BL check_wheel
+//DIAGNOSI PER RUOTA 2  
+    LDR R0, =speed_wheel_2
+    MOV R1, #0
+    BL check_wheel
+//DIAGNOSI PER RUOTA 3  
+    LDR R0, =speed_wheel_3
+    MOV R1, #0
+    BL check_wheel
+//DIAGNOSI PER RUOTA 4  
+    LDR R0, =speed_wheel_4
+    MOV R1, #0
+    BL check_wheel
+
+    BX LR // ritorno al chiamante
 
 check_wheel: // ho su R0 la velocita della ruota e su R1 il numero della ruota 
     LDR  R2, [R0] // metto sul regsitro R2 la velocita della ruota 
@@ -101,6 +117,8 @@ init_sensor: // etichetta che inizializza i sensori
     STR R0, [speed_wheel_3]
     STR R0, [speed_wheel_4]
     STR R0, [global_speed]
+    MOV R0, #1 // metto 1 nel registro  R1
+    STR r1. =engine_status // carico 1 nel registro engine status per simulare il motore acceso
     BX LR 
 
 end_program: // fine del programma 

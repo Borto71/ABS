@@ -36,5 +36,8 @@ loop:
     BEQ loop // se è acceso rimango nel loop
     B end // se è 0 salto a end e termino il loop
 
+end: 
+    
+
 
 
