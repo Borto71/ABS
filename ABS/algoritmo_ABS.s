@@ -22,22 +22,37 @@ wheel_pressure_1: .space 4 // pressione frenanate sulla ruota 1
 wheel_pressure_2: .space 4 // pressione frenanate sulla ruota 2
 wheel_pressure_3: .space 4 // pressione frenanate sulla ruota 3
 wheel_pressure_4: .space 4 // pressione frenanate sulla ruota 4
+vehicle_speed: .space 4 // velocita della machhina (calcolata nella funzione apposita)
 
 .section .text
 
 .global_start
 
 _start:
-    LDR R0, =engine_status // carico il valore puntato di engine_status in R0
-
-loop: 
-    LDR R1, [R0] // carico il valore di engine_status puntato da R0 su R1
-    CMP R1, #0 // confronto con 0 per vedere se il motore è spento
-    BEQ loop // se è acceso rimango nel loop
-    B end // se è 0 salto a end e termino il loop
-
-end: 
+    LDR R0, =pressure_normal // carico sul registro R1 l'indirizzo che punta alla variablile della pressione normale del freno
+    LDR R1, [R0] // ora carico il valore effettivo 
+    LDR R0, =pressure_reduced // carico sul registro R1 l'indirizzo che punta alla variablile della pressione ridotta del freno
+    LDR R2, [R0] // ora carico il valore effettivo
     
+abs_loop: 
+    // controllo lo stato del motore
+    LDR R3, =engine_status 
+    LDR R4, [R3]
+    CMP R4, #1 
+    BNE stop_abs
+
+    //leggi la velocità del veicolo
+    LDR R3, =vehicle_speed
+    LDR R4, [R3] // R4 = velocità del veicolo
+    CMP R4, #5 // controllo se è maggiore o minore di 5
+    BLE abs_loop // se <= 5 rimani in ascolto (non attivare ABS)
+    
+
+
+
+stop_abs: // termino il programma 
+    MOV R7, #1 // codice di uscita 
+    SWI #0 // genera un interruzione software, utilizzato per sistema embedded
 
 
 
