@@ -46,7 +46,9 @@ abs_loop:
     LDR R4, [R3] // R4 = velocità del veicolo
     CMP R4, #5 // controllo se è maggiore o minore di 5
     BLE abs_loop // se <= 5 rimani in ascolto (non attivare ABS)
-    
+
+    // controllo ruota 1 
+    PUSH {R0-R12, LR} // pusho tutti i regsitri nello stack
     
 
 
