@@ -1,17 +1,3 @@
-/*IDEA:
-
-ATTIVAXIONE SOPRA I 5 km/h IN MODO DA NON ENTRARE A VELOCITA TROPPO BASSE
-
-RILEVAZIONE BLOCCAGGIO  
-    RILEVAZIONE ASSE/RUOTA BLOCCANTE
-
-        PRESSIONE FRENANTE = 0 - 1(NON FULL) IN OSCILLAZZIONE REGOLARE
-
-
-NON RILEVAZIONE BLOCCAGGIO  (ritorno ad una situazione di non bloccaggio solo quando la sitazione è stabile x intervalli di tempo con ruota NON bloccata)
-
-    SISTEMA IN FASE DI ASCOLTO(LETTURA TUTTI SENSORI) */
-
 .section .data  
 pressure_normal: .word 100 // pressione frenante normale, il valore andrebbe cambiato da macchina a macchina
 pressure_reduced .word 50 // pressione ridotta per ruota bloccata, valore calcolato in base alla macchina che si usa 
@@ -48,12 +34,20 @@ abs_loop:
     BLE abs_loop // se <= 5 rimani in ascolto (non attivare ABS)
 
     // controllo ruota 1 
-    PUSH {R0-R12, LR} // pusho tutti i regsitri nello stack
+    LDR R5, =wheel_pressure_1 // carico l'indirizzo della pressione del freno della ruota 1
+    LDR R6,[R5]  // carico il valore in R6
+    LDR R5, =deceleration // carico l'indirizzo della decelerazione in R5
+    LDR R7, [R5] // carico il valore della decelerazione in R7
+    MOV R1, R4  // metto la velocita del veicolo in R1
+    BL calcola_blocco // chiamo la funzione che calcola il blocco
+    
+    
+
     
 
 
 
-stop_abs: // termino il programma 
+stop_abs: // termino il programma   
     MOV R7, #1 // codice di uscita 
     SWI #0 // genera un interruzione software, utilizzato per sistema embedded
 
