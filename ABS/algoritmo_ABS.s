@@ -41,11 +41,6 @@ abs_loop:
     MOV R1, R4  // metto la velocita del veicolo in R1
     BL calcola_blocco // chiamo la funzione che calcola il blocco
     
-    
-
-    
-
-
 
 stop_abs: // termino il programma   
     MOV R7, #1 // codice di uscita 
