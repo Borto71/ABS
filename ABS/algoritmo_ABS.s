@@ -1,4 +1,6 @@
 .global _start
+.global auto_diagnosi
+.type auto_diagnosi, %function
 
 _start:
     // Inizializzo le variabili 

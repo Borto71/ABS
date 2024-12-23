@@ -1,17 +1,6 @@
-//SISTEMA DI AUTO-DIAGNOSI PER VEICOLO IN MOVIMENTO
-
-//prima di effettuare l'auto diagnosi in maniera ripetitiva testare e sincronizzare i sensori collegati
-//(OPZIONALE: implementare un filtro passa-basso per rimuovere eventuali rumori presenti)
-
-//lettura costante di sensore di velocità e controllo con gli altri sensori per decretare se uno di essi è guasto
-//installazione di un sensore aggiuntivo che calcola la velocità del veicolo in modo da comaprarla col sensore sulla gomma 
-
-//controllo anche su impanto idraulico, sopratutto su valvole e pompe in modo da effettuare auto diagnosi anche su quello.
-
-
 .section .data 
 sync_message:  .asciz "Sincronizzazione in corso..."
-error_message: .asciz "Errore sulla ruota:"
+error_message: .asciz "Errore sulla ruota:"     
 wheel_labels: .asciz "1\0"
               .asciz "2\0"
               .asciz "3\0"
@@ -29,6 +18,9 @@ anomaly_msg .asciz "Anomalia rilevata, ||ABS NON IN FUNZIONE||ARRESTARE IL VEICO
 
 
 .section .text 
+.global algoritmo_ABS
+.type algoritmo_ABS, %function
+
 
 .global_start
 
