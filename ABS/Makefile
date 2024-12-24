@@ -1,35 +1,38 @@
-# Definizione della toolchain
+# Compiler and tools
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
 LD = arm-none-eabi-ld
+GDB = arm-none-eabi-gdb
 OBJCOPY = arm-none-eabi-objcopy
 
-# Flag di compilazione
-CFLAGS = -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -g -Iinclude
-ASFLAGS = $(CFLAGS)
-LDFLAGS =
+# Compilation flags
+CFLAGS = -g -mcpu=cortex-a7 -Wall
+ASFLAGS = -g -mcpu=cortex-a7
 
-# File sorgente
-C_SOURCES = src/main.c
-ASM_SOURCES = src/algoritmo_ABS.s src/auto_diagnosi.s
+# Linker flags
+LDFLAGS = -T linker.ld -nostdlib
 
-# Genera una lista di file oggetto corrispondente ai sorgenti
-OBJECTS = $(C_SOURCES:.c=.o) $(ASM_SOURCES:.s=.o)
+# Source and object files
+SRCDIR = src
+OBJDIR = obj
+SRCS = $(wildcard $(SRCDIR)/*.s)
+OBJS = $(patsubst $(SRCDIR)/%.s, $(OBJDIR)/%.o, $(SRCS))
 
-# Target finale
+# Output file
 TARGET = main.elf
 
-# Regole
+# Default rule
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
+# Linking
+$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) -o $@
 
-src/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Assembly compilation
+$(OBJDIR)/%.o: $(SRCDIR)/%.s
+	@mkdir -p $(OBJDIR)
+	$(AS) $(ASFLAGS) $< -o $@
 
-src/%.o: src/%.s
-	$(CC) $(ASFLAGS) -c $< -o $@
-
+# Clean rule
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -rf $(OBJDIR) $(TARGET)
